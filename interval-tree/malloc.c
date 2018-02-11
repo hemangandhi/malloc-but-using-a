@@ -53,13 +53,28 @@ void * malloc(size_t size){
     return find->left->mem;
 }
 
+void * calloc(size_t n_memb, size_t memb_size){
+    void * t = malloc(n_memb  * memb_size);
+    if (t == NULL) return t;
+
+    int i;
+    for(i = 0; i < n_memb * memb_size; i++){
+        * (char *) (t + i) = 0;
+    }
+
+    return t;
+}
+
 void free(void * ptr){
     struct Node * me = (struct Node *) (ptr - 2*sizeof(struct Node));
 
-    if(me->parent->left != me || me - (me->parent->right) != sizeof(struct Node)){
+    if(me->parent->left != me || (me->parent->right) - me != sizeof(struct Node)){
         //corruption
         return;
     }
 
+    struct Node * adj_free = me->parent->right;
+    while(adj_free->free_amt < adj_free->size && adj_free->left != NULL) adj_free = adj_free->left;
 
+    
 }
